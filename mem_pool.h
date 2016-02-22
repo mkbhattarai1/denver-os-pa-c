@@ -9,8 +9,11 @@
 
 /* type declarations */
 
+typedef enum _alloc_policy { FIRST_FIT, BEST_FIT } alloc_policy;
+
 typedef struct _pool {
-    char *pool;
+    char *mem;
+    alloc_policy policy;
     size_t total_size;
     size_t alloc_size;
     unsigned num_allocs;
@@ -22,21 +25,39 @@ typedef struct _alloc {
     char *mem;
 } alloc_t, *alloc_pt;
 
-typedef enum _alloc_status { ALLOC_OK, ALLOC_FAIL } alloc_status;
+typedef struct _pool_segment {
+    size_t size;
+    unsigned allocated; // 1-allocation, 0-gap
+} pool_segment_t, *pool_segment_pt;
 
-typedef enum _alloc_policy { FIRST_FIT, BEST_FIT } alloc_policy;
+typedef enum _alloc_status {
+    ALLOC_OK,
+    ALLOC_FAIL,
+    ALLOC_CALLED_AGAIN,
+    ALLOC_NOT_FREED
+} alloc_status;
 
 /* function declarations */
 
-/* TODO descriptions */
-pool_pt mem_pool_open(size_t size, alloc_policy policy);
+alloc_status
+mem_init();
 
-alloc_status mem_pool_close(pool_pt pool);
+alloc_status
+mem_free();
 
-alloc_pt mem_new_alloc(pool_pt pool, size_t size);
+pool_pt
+mem_pool_open(size_t size, alloc_policy policy);
 
-alloc_status mem_del_alloc(pool_pt pool, alloc_pt alloc);
+alloc_status
+mem_pool_close(pool_pt pool);
 
-/* TODO printing functions for debugging & testing */
+alloc_pt
+mem_new_alloc(pool_pt pool, size_t size);
+
+alloc_status
+mem_del_alloc(pool_pt pool, alloc_pt alloc);
+
+void
+mem_inspect_pool(pool_pt pool, pool_segment_pt *segments, unsigned *num_segments);
 
 #endif //DENVER_OS_PA_C_MEM_POOL_H
