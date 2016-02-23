@@ -294,6 +294,11 @@ static alloc_status _mem_remove_from_gap_ix(pool_mgr_pt pool_mgr,
     // update metadata (num_gaps)
     // zero out the element at position num_gaps!
 
+
+
+
+
+
     return ALLOC_FAIL;
 }
 
